@@ -61,16 +61,16 @@ class MentalHealthProfessionalViewModel: ObservableObject {
                 mentalHealthProfessionalType: workingWithPro.rawValue
             )
             
-            print("✅ Successfully saved all onboarding data to Firestore.")
+            print("Successfully saved all onboarding data to Firestore.")
 
             // Update the local user model in the session manager
-            sessionManager.updateLocalUser(with: data)
+            sessionManager.updateLocalUserPregnancyData(with: data)
             
             // Navigate to the next major onboarding screen
             navigateToNotifications = true
 
         } catch {
-            print("❌ Error saving onboarding data: \(error.localizedDescription)")
+            print("Error saving onboarding data: \(error.localizedDescription)")
             errorMessage = "Failed to save your selections. Please try again."
         }
         

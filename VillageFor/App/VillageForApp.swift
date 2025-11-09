@@ -15,7 +15,7 @@ struct VillageForApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @StateObject private var sessionManager = SessionManager()
     
-    // ✨ Key Change: This is the persistent flag for onboarding completion ✨
+    //flag for our onboarding completion
     @AppStorage("hasCompletedOnboarding") var hasCompletedOnboarding: Bool = false
     
     @State private var isShowingSplash = true
@@ -25,7 +25,7 @@ struct VillageForApp: App {
             ZStack {
                 Group {
                     // Debugging prints to see the app's state
-                    let _ = print("🔍 App State - hasCompletedOnboarding: \(hasCompletedOnboarding), currentUser: \(sessionManager.currentUser?.id ?? "nil")")
+                    let _ = print("App State - hasCompletedOnboarding: \(hasCompletedOnboarding), currentUser: \(sessionManager.currentUser?.id ?? "nil")")
                     
 #if DEBUG
                     if ProcessInfo.processInfo.arguments.contains("-debugBypassLogin") {
@@ -41,12 +41,12 @@ struct VillageForApp: App {
                         Group {
                             // Decide whether to show MainTabView or WelcomeView
                             if hasCompletedOnboarding && sessionManager.currentUser != nil {
-                                let _ = print("✅ Showing MainTabView (Onboarding complete & user logged in)")
+                                let _ = print("Showing MainTabView (Onboarding complete & user logged in)")
                                 MainTabView()
                                     .environmentObject(sessionManager)
                             } else {
-                                let _ = print("➡️ Showing WelcomeView (Onboarding not complete or user not logged in)")
-                                // ✨ Pass the @AppStorage binding to WelcomeView ✨
+                                let _ = print("Showing WelcomeView (Onboarding not complete or user not logged in)")
+                                // Pass the @AppStorage binding to WelcomeView
                                 WelcomeView(hasCompletedOnboarding: $hasCompletedOnboarding)
                                     .environmentObject(sessionManager)
                             }
@@ -68,6 +68,7 @@ struct VillageForApp: App {
                         .transition(.opacity)
                 }
             }
+            .font(.epilogue(size: 14))
             .onAppear {
                 // Dismiss splash screen after a delay
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3.5) {
@@ -83,11 +84,11 @@ struct VillageForApp: App {
                 if let user = newUser {
                     // Use the logic in SessionManager to determine if the user has completed onboarding
                     hasCompletedOnboarding = sessionManager.hasCompletedOnboarding(user: user)
-                    print("🔄 currentUser changed. hasCompletedOnboarding (AppStorage) updated to: \(hasCompletedOnboarding)")
+                    print("currentUser changed. hasCompletedOnboarding (AppStorage) updated to: \(hasCompletedOnboarding)")
                 } else {
                     // If user logs out, reset the persistent flag
                     hasCompletedOnboarding = false
-                    print("🔄 currentUser logged out. hasCompletedOnboarding (AppStorage) reset to false.")
+                    print("currentUser logged out. hasCompletedOnboarding (AppStorage) reset to false.")
                 }
             }
         }
@@ -114,3 +115,35 @@ struct MockData {
     )
 }
 #endif
+
+
+
+extension Font {
+    
+    /// Creates a custom Epilogue font with the specified size and weight.
+    /// - Parameters:
+    ///   - size: The point size of the font.
+    ///   - weight: The desired font weight.
+    /// - Returns: A custom Font instance.
+    static func epilogue(size: CGFloat, weight: Font.Weight = .regular) -> Font {
+        // This maps the standard SwiftUI font weights to your custom font files.
+        // IMPORTANT: The string names ("Epilogue-Regular", "Epilogue-Bold") must
+        // match the font's PostScript name exactly. You can find this by
+        // opening the font file in the "Font Book" application on your Mac.
+        let fontName: String
+        switch weight {
+        case .bold:
+            fontName = "Epilogue-Bold"
+        case .medium:
+            fontName = "Epilogue-Medium"
+        case .semibold:
+            fontName = "Epilogue-SemiBold"
+        // Add other weights like .light, .extrabold etc. if you have them.
+        default:
+            fontName = "Epilogue-Regular"
+        }
+        
+        return .custom(fontName, size: size)
+    }
+}
+

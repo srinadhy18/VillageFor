@@ -7,12 +7,13 @@
 
 
 import SwiftUI
+import FirebaseCore
 
 
 struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     @EnvironmentObject var sessionManager: SessionManager
-    
+        
     init(user: User) {
         // we are creating the ViewModel and injecting the user data.
         _viewModel = StateObject(wrappedValue: HomeViewModel(user: user))
@@ -30,15 +31,27 @@ struct HomeView: View {
                     
                     // Action Cards
                     HStack(spacing: 16) {
-                        ActionCard(
+                        MoodActionCard(
                             title: "YOUR MOOD",
                             subtitle: "Check in",
-                            action: { viewModel.navigateToMoodCheck() }
+                            emotion: viewModel.shouldResetMood ? nil : viewModel.latestCheckin?.moodName,
+                            iconName: viewModel.shouldResetMood ? nil : viewModel.moodIcon,
+                            lastLoggedDate: viewModel.lastMoodCheckinDate,
+                            action: {
+                                sessionManager.isTabBarHidden = true
+                                viewModel.navigateToMoodCheck()
+                            }
                         )
-                        ActionCard(
-                            title: "EPDS ASSESSMENT",
+                        
+                        EPDSActionCard(
+                            title: "WEEKLY ASSESSMENT",
                             subtitle: "Take quiz",
-                            action: { viewModel.navigateToEPDSAssessment() }
+                            score: viewModel.epdsScoreToShow,
+                            scoreSubtitle: "Total Score",
+                            action: {
+                                sessionManager.isTabBarHidden = true
+                                viewModel.navigateToEPDSAssessment()
+                            }
                         )
                     }
                     
@@ -67,19 +80,27 @@ struct HomeView: View {
                     MoodCheckinView(dailyCheckin: newCheckin)
                 }
             )
-//            .navigationDestination(
-//                isPresented: $viewModel.shouldNavigateToEPDSAssessment,
-//                destination: {
-//                    var checkin = viewModel.latestCheckin
-//                    EnergyLevelView(dailyCheckin: checkin) }
-//            )
+            
+            .navigationDestination(isPresented: $viewModel.shouldNavigateToEPDSIntroduction) {
+                // Create a new assessment object when the flow starts
+                let newAssessment = EPDSAssessment(timestamp: Timestamp())
+                EPDSIntroductionView(assessment: newAssessment)
+                    .environmentObject(sessionManager)
+            }
+            .navigationDestination(isPresented: $viewModel.shouldNavigateDirectlyToEPDS) {
+                // Also create a new assessment object when skipping the intro
+                let newAssessment = EPDSAssessment(timestamp: Timestamp())
+                EPDSQuestion1View(assessment: newAssessment)
+                    .environmentObject(sessionManager)
+            }
+            
         }
     }
 }
 
 #Preview {
     let sampleUser = User(id: "123", email: "preview@test.com", firstName: "Caroline", lastName: "Brown")
-
+    
     NavigationStack {
         HomeView(user: sampleUser).environmentObject(SessionManager())
     }

@@ -10,7 +10,6 @@ import SwiftUI
 struct MainTabView: View {
     // we will have user object here so that we can pass the user details if if we want them in specific tabs.
     
-    
     // Access the sessionManager from the environment to pass it down or use it here.
     @EnvironmentObject var sessionManager: SessionManager
     
@@ -30,11 +29,18 @@ struct MainTabView: View {
                         //Passing below views temporarily. change it after creating in future development.
                         HomeView(user: user)
                     case .learn:
-                        HomeView(user: user)
+                        LearnView()
+                            .environmentObject(sessionManager)
                     case .insights:
-                        HomeView(user: user)
+                        InsightsView()
                     case .me:
                         HomeView(user: user)
+                    }
+                }else {
+                    // Optional fallback if no user session found
+                    VStack {
+                        ProgressView("Loading user...")
+                            .padding()
                     }
                 }
             }
@@ -44,5 +50,9 @@ struct MainTabView: View {
             }
         }
         .ignoresSafeArea(.keyboard)
+        .onReceive(NotificationCenter.default.publisher(for: .resetToHomeTab)) { _ in
+            print("MainTabView: Received resetToHomeTab, switching to home tab")
+            selectedTab = .home
+            print("MainTabView: Set selectedTab to .home")        }
     }
 }

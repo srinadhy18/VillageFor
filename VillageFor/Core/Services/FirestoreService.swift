@@ -117,7 +117,7 @@ class FirestoreService: FirestoreServiceProtocol {
             isPostpartum: Bool?,
             postpartumWeeks: Int?,
             isFirstPostpartumExperience: Bool?,
-            mentalHealthProfessionalType: String? // Corrected parameter name
+            mentalHealthProfessionalType: String?
         ) async throws {
             var data: [String: Any] = [:]
 
@@ -154,4 +154,51 @@ class FirestoreService: FirestoreServiceProtocol {
               }
           }
       }
+    
+    func fetchLatestEPDSAssessment(uid: String) async throws -> EPDSAssessment? {
+        let assessmentsRef = userDocument(uid: uid).collection("epdsAssessments")
+        
+        // Order by timestamp in descending order and get the most recent one
+        let query = assessmentsRef.order(by: "timestamp", descending: true).limit(to: 1)
+        
+        let snapshot = try await query.getDocuments()
+        
+        // Decode the first document found, if any
+        return try snapshot.documents.first?.data(as: EPDSAssessment.self)
+    }
+    
+    /// Saves a completed EPDS assessment to the user's profile.
+       func saveEPDSAssessment(uid: String, assessment: EPDSAssessment) async throws {
+           // Saves the assessment to a new "epdsAssessments" subcollection.
+           let documentRef = userDocument(uid: uid).collection("epdsAssessments").document()
+           try await documentRef.setData(from: assessment)
+           print("EPDS assessment saved successfully with ID: \(documentRef.documentID)")
+       }
+    
+    
+    /// Articles related services
+        func fetchArticles() async throws -> [Article] {
+            let snapshot = try await Firestore.firestore()
+                .collection("articles")
+                .order(by: "createdAt", descending: true)
+                .getDocuments()
+            
+            // Decode Firestore documents into Article model
+            return snapshot.documents.compactMap { document in
+                try? document.data(as: Article.self)
+            }
+        }
+    
+    ///Insights section
+    func fetchAllCheckins(uid: String) async throws -> [DailyCheckin] {
+        let snapshot = try await Firestore.firestore()
+            .collection("users")
+            .document(uid)
+            .collection("dailyCheckins")
+            .order(by: "timestamp", descending: false)
+            .getDocuments()
+        
+        return snapshot.documents.compactMap { try? $0.data(as: DailyCheckin.self) }
+    }
+    
 }

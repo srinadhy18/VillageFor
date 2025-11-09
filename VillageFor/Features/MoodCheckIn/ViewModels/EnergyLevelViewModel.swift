@@ -6,8 +6,7 @@
 //
 
 import Foundation
-import FirebaseAuth
-import FirebaseFirestore
+
 
 @MainActor
 class EnergyLevelViewModel: ObservableObject {

@@ -6,15 +6,14 @@
 //
 
 import Foundation
-import FirebaseAuth
+import SwiftUICore
 
 @MainActor
 class JournalViewModel: ObservableObject {
     
-    // This property holds the check-in data from the previous screens.
-    private var dailyCheckin: DailyCheckin
+    // This property holds the check-in data from the previous screens lets pass same to daily affirmations page.
+     var dailyCheckin: DailyCheckin
     
-    // A computed property to easily access the emotion.
     var emotion: String {
         dailyCheckin.selectedEmotion ?? "feeling"
     }
@@ -27,15 +26,13 @@ class JournalViewModel: ObservableObject {
     @Published var journalText = ""
     @Published var selectedFactors = Set<String>()
     
-    // This flag will signal the view to dismiss the flow when saving is complete.
-    @Published var didSaveEntry = false
     
-    private let firestoreService: FirestoreServiceProtocol
+    @Published var shouldNavigateToAffirmations = false
+    
     
     // The initializer now takes the DailyCheckin object and the service.
-    init(dailyCheckin: DailyCheckin, firestoreService: FirestoreServiceProtocol = FirestoreService()) {
+    init(dailyCheckin: DailyCheckin) {
         self.dailyCheckin = dailyCheckin
-        self.firestoreService = firestoreService
         
         // Customize prompts based on the selected emotion
         let emotionWord = (dailyCheckin.selectedEmotion ?? "feeling").lowercased()
@@ -60,24 +57,37 @@ class JournalViewModel: ObservableObject {
         }
     }
     
-    /// This is the final save function for the entire check-in flow.
-    func saveEntry() async {
-        guard let uid = Auth.auth().currentUser?.uid else { return }
-        
-        // 1. Update the dailyCheckin object with the final details.
-        dailyCheckin.journalText = self.journalText
-        dailyCheckin.factors = Array(self.selectedFactors)
-        
-        do {
-            // 2. Save the completed object to Firestore.
-            try await firestoreService.saveDailyCheckin(uid: uid, checkin: dailyCheckin)
-            print("✅ Journal entry saved successfully!")
-            
-            // 3. Set the flag to true to signal the UI to dismiss.
-            didSaveEntry = true
-            
-        } catch {
-            print("❌ Error saving journal entry: \(error.localizedDescription)")
+    func continueTapped() {
+        shouldNavigateToAffirmations = true
+    }
+}
+
+extension JournalViewModel {
+    //Change the images here for emotion icons.
+    var emotionIcon: String {
+        switch emotion.lowercased() {
+        case "happy", "joyful", "curious", "interested", "creative", "hopeful", "inspired":
+            return "sun.max.fill"
+        case "calm", "content", "loving", "peaceful", "satisfied", "trusting", "free":
+            return "leaf.fill"
+        case "grateful", "accepted", "loved", "respected", "valued", "proud", "powerful":
+            return "heart.circle.fill"
+        case "startled", "amazed", "excited", "astonished", "awed", "eager", "energetic":
+            return "startled"
+        case "sad", "lonely", "vulnerable", "guilty", "stressed", "depressed", "hurt":
+            return "cloud.rain.fill"
+        case "fearful", "insecure", "weak", "anxious", "rejected", "threatened", "overwhelmed":
+            return "exclamationmark.triangle.fill"
+        case "angry", "frustrated", "critical", "let down", "distant", "bitter":
+            return "flame.fill"
+        case "disgusted", "disappointed", "disapproving", "repelled", "judgmental", "embarrassed", "appalled":
+            return "xmark.octagon.fill"
+        default:
+            return "startled"
         }
+    }
+    
+    var emotionColor: Color {
+        Color("\(emotion)Color") // "HappyColor", "SadColor"
     }
 }
