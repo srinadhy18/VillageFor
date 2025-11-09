@@ -15,9 +15,9 @@ struct DismissButton: View {
         Button(action: { dismiss() }) {
             Image(systemName: "xmark")
                 .font(.system(size: 10, weight: .medium))
-                .foregroundColor(.black)
+                .foregroundStyle(.black)
                 .padding(8)
-                .background(Color.white) // Added a background color for the circle fill
+//                .background(Color.white) // Added a background color for the circle fill
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.black, lineWidth: 1))
         }

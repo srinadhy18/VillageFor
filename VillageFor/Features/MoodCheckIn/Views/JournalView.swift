@@ -24,7 +24,7 @@ struct JournalView: View {
                     .font(.largeTitle).fontWeight(.bold)
                 
                 // Emotion Card
-                EmotionDisplayCard(emotion: viewModel.emotion)
+                EmotionDisplayCard(emotion: viewModel.emotion, icon: viewModel.emotionIcon, backgroundColor: viewModel.emotionColor)
                 
                 // Journal Text Editor
                 TextEditor(text: $viewModel.journalText)
@@ -63,8 +63,7 @@ struct JournalView: View {
                 
                 Button("Continue") {
                     Task {
-                        await viewModel.saveEntry()
-                        // Find a way to dismiss the whole check-in flow
+                        viewModel.continueTapped()
                     }
                 }
                 .buttonStyle(.primary)
@@ -78,12 +77,22 @@ struct JournalView: View {
             
             // Close button
             ToolbarItem(placement: .navigationBarTrailing) {
-        DismissButton()
+                DismissButton()
             }
         }
+        .navigationDestination(isPresented: $viewModel.shouldNavigateToAffirmations) {
+           
+            DailyAffirmationView(dailyCheckin: updatedCheckin)
+        }
     }
+    private var updatedCheckin: DailyCheckin {
+        var checkin = viewModel.dailyCheckin
+        checkin.journalText = viewModel.journalText
+        checkin.factors = Array(viewModel.selectedFactors)
+        return checkin
+    }
+    
 }
-
 #Preview {
     // The preview needs a sample DailyCheckin object to work
     let sampleCheckin = DailyCheckin(selectedEmotion: "Astonished", timestamp: .init(date: Date()))

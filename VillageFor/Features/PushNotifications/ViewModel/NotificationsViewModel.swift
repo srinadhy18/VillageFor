@@ -45,9 +45,9 @@ class NotificationsViewModel: ObservableObject {
         Task {
             do {
                 try await notificationsService.requestAuthorization()
-                print("✅ Notification permission requested.")
+                print("Notification permission requested.")
             } catch {
-                print("❌ Error requesting notification permission: \(error.localizedDescription)")
+                print("Error requesting notification permission: \(error.localizedDescription)")
                 // Optionally, show an alert to the user if permission fails.
             }
         }

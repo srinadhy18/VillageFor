@@ -7,9 +7,11 @@
 
 import SwiftUI
 
-// MARK: - Subviews
+
 struct EmotionDisplayCard: View {
     let emotion: String
+    let icon: String
+    let backgroundColor: Color
     
     var body: some View {
         HStack {
@@ -19,38 +21,18 @@ struct EmotionDisplayCard: View {
                     .foregroundColor(.white)
                     .opacity(0.9)
                 
-                // Simple smiley face icon to match Figma
-                Image(systemName: "face.smiling")
+                Image(systemName: icon)
                     .font(.system(size: 50, weight: .light))
                     .foregroundColor(.white)
             }
             
             Spacer()
-            
-            // Decorative pattern on the right (optional)
-//            VStack {
-//                ForEach(0..<4, id: \.self) { row in
-//                    HStack {
-//                        ForEach(0..<4, id: \.self) { col in
-//                            Circle()
-//                                .fill(.white.opacity(0.1))
-//                                .frame(width: 8, height: 8)
-//                        }
-//                    }
-//                }
-//            }
-//            .padding(.trailing, 8)
         }
         .padding(24)
         .frame(height: 140)
-        .background(
-            LinearGradient(
-                colors: [Color.purple.opacity(0.8), Color.purple.opacity(0.6)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
+        .background(backgroundColor)
         .cornerRadius(24)
-        .shadow(color: .purple.opacity(0.2), radius: 8, x: 0, y: 4)
+        .shadow(color: backgroundColor.opacity(0.3),
+                radius: 8, x: 0, y: 4)
     }
 }

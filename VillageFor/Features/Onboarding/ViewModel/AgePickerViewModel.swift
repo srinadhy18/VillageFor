@@ -40,7 +40,7 @@ class AgePickerViewModel: ObservableObject {
         do {
             //update the user's age in the database
             try await firestoreService.updateUserAge(uid: uid, age: age)
-            print("✅ User age (\(age)) saved successfully in Firestore.")
+            print("User age (\(age)) saved successfully in Firestore.")
 
 
             // This ensures our app's local state for the user is up-to-date.
@@ -49,7 +49,7 @@ class AgePickerViewModel: ObservableObject {
                 sessionManager.currentUser = currentUser
                 print("SessionManager currentUser age updated to: \(currentUser.age ?? 0)")
             } else {
-                print("⚠️ Warning: SessionManager.currentUser is nil. Cannot update age locally.")
+                print("Warning: SessionManager.currentUser is nil. Cannot update age locally.")
                 // This scenario indicates a potential issue upstream; currentUser should ideally exist by now.
             }
 
@@ -61,7 +61,7 @@ class AgePickerViewModel: ObservableObject {
             // This flag is the very last step, set in NotificationsViewModel.
 
         } catch {
-            print("❌ Error updating user age: \(error.localizedDescription)")
+            print("Error updating user age: \(error.localizedDescription)")
             // Optionally, show an error alert to the user
         }
     }

@@ -29,6 +29,11 @@ protocol FirestoreServiceProtocol {
          isFirstPostpartumExperience: Bool?,
          mentalHealthProfessionalType: String?
      ) async throws
-
     
+    func fetchLatestEPDSAssessment(uid: String) async throws -> EPDSAssessment?
+    func saveEPDSAssessment(uid: String, assessment: EPDSAssessment) async throws
+    
+    func fetchArticles() async throws -> [Article]
+    
+    func fetchAllCheckins(uid: String) async throws -> [DailyCheckin]
 }
