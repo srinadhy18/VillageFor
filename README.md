@@ -12,7 +12,7 @@ Dynamic Home Screen: A central dashboard that provides daily affirmations and dy
 
 Persistent User Settings: Smart use of @AppStorage and UserDefaults to remember user preferences, such as skipping introductory screens on subsequent uses.
 
-Screenshots (under development - development hours estimated till oct 5th)
+Screenshots (under development - development hours estimated till Nov 22nd)
 
 Technical Stack & Architecture
 This project was built from the ground up using a modern, scalable, and testable architecture.
@@ -50,15 +50,4 @@ Utilizes protocols and dependency injection to create mock services, isolating t
 Project Structure
 The project is organized into a clean, feature-based folder structure to promote scalability and maintainability.
 
-VillageFor/
-├── Core/
-│   ├── Components/     # Reusable SwiftUI Views (e.g., EPDSOptionButton)
-│   ├── Models/         # Data structures (e.g., User, DailyCheckin)
-│   ├── Services/       # Backend logic (e.g., FirestoreService)
-│   └── Extensions/     # Helpers for existing types (e.g., Font+Custom)
-│
-└── Features/
-    ├── Authentication/ # Onboarding, Sign Up, Login
-    ├── Home/           # The main dashboard
-    ├── MoodCheckin/    # The multi-step mood check-in flow
-    └── EPDS/           # The multi-step EPDS assessment flow
+
