@@ -64,7 +64,7 @@ class CreateProfileViewModel: ObservableObject {
         do {
             // Step 1: Create Firebase Auth user
             let authResult = try await Auth.auth().createUser(withEmail: email, password: password)
-            print("✅ User created with UID: \(authResult.user.uid)")
+            print("User created with UID: \(authResult.user.uid)")
 
             // Step 2: Create user profile object
             let userProfile = User(
@@ -89,7 +89,7 @@ class CreateProfileViewModel: ObservableObject {
             print("SessionManager currentUser updated after profile creation.")
 
             profileSaveSuccess = true
-            print("✅ Profile saved successfully! Navigating to next onboarding step.")
+            print("Profile saved successfully! Navigating to next onboarding step.")
 
         } catch let error as NSError {
             handleFirebaseError(error)
@@ -136,7 +136,7 @@ class CreateProfileViewModel: ObservableObject {
         do {
             try await firestoreService.saveUserProfile(user: userProfile) // This will overwrite or merge, depending on FirestoreService impl
             profileSaveSuccess = true
-            print("✅ Profile saved successfully!")
+            print("Profile saved successfully!")
         } catch let error as NSError {
             handleFirebaseError(error)
         }

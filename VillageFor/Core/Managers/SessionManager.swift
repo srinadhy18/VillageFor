@@ -22,6 +22,14 @@ class SessionManager: ObservableObject {
         setupFirebaseAuthListener()
     }
 
+    
+    func navigateToHome() {
+        print("SessionManager: navigateToHome() called")
+         NotificationCenter.default.post(name: .resetToHomeTab, object: nil)
+         NotificationCenter.default.post(name: .navigateToHome, object: nil)
+         print("SessionManager: Posted both notifications")
+    }
+    
     private func setupFirebaseAuthListener() {
         Auth.auth().addStateDidChangeListener { [weak self] _, user in
             guard let self = self else { return }
@@ -47,7 +55,7 @@ class SessionManager: ObservableObject {
         }
     }
     
-    func updateLocalUser(with onboardingData: OnboardingData) {
+    func updateLocalUserPregnancyData(with onboardingData: OnboardingData) {
          guard self.currentUser != nil else {
              print("⚠️ Warning: currentUser is nil. Cannot update local user model.")
              return
@@ -60,7 +68,7 @@ class SessionManager: ObservableObject {
          self.currentUser?.isFirstPostpartumExperience = (onboardingData.isFirstPostpartumExperience == .yes)
          self.currentUser?.mentalHealthProfessionalType = onboardingData.workingWithMentalHealthPro?.rawValue
          
-         print("✅ SessionManager's local currentUser has been updated with onboarding data.")
+         print("SessionManager's local currentUser has been updated with onboarding data.")
      }
 
     // represents a user who has completed onboarding, especially for existing users.
@@ -73,4 +81,12 @@ class SessionManager: ObservableObject {
         return true
     }
 
+}
+
+
+extension Notification.Name {
+    static let navigateToHome = Notification.Name("navigateToHome")
+    static let resetToHomeTab = Notification.Name("resetToHomeTab")
+    static let moodCheckinCompleted = Notification.Name("moodCheckinCompleted")
+    static let epdsAssessmentCompleted = Notification.Name("epdsAssessmentCompleted")
 }

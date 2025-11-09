@@ -59,7 +59,7 @@ class LoginViewModel: ObservableObject {
         do {
             // 1. Authenticate user with Firebase Auth
             let firebaseUser = try await authService.signIn(withEmail: email, password: password)
-            print("✅ Successfully logged in Firebase user with UID: \(firebaseUser.id)")
+            print("Successfully logged in Firebase user with UID: \(firebaseUser.id)")
 
             // 2. Fetch the complete user profile from Firestore
             // This profile contains all the custom data (firstName, age, consent, preferences)
